@@ -128,3 +128,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Don't store our submission .csv files in git.
+submission*.csv
