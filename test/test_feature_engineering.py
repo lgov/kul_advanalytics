@@ -25,13 +25,13 @@ class TestFeatureEngineering(unittest.TestCase):
         self.assertEqual(2, first_row['third_party_1_id_count'])
         self.assertEqual(2, first_row['third_party_1_vehicle_id_count'])
 
-        # The second isn't duplicated, but has some NaN values for some id's
+        # The second isn't duplicated, but has some NaN values for some id's. If an
+        # ID is NaN, the corresponding count will be set to 0.
         second_row = df.iloc[1]
-        self.assertTrue(np.isnan(second_row['claim_vehicle_id_count']))
+        self.assertEqual(0, second_row['claim_vehicle_id_count'])
         self.assertEqual(1, second_row['policy_holder_id_count'])
         self.assertEqual(1, second_row['driver_id_count'])
-        self.assertTrue(np.isnan(second_row['driver_vehicle_id_count']))
-        self.assertTrue(np.isnan(second_row['third_party_1_id_count']))
-        self.assertTrue(np.isnan(second_row['third_party_1_vehicle_id_count']))
-
+        self.assertEqual(0, second_row['driver_vehicle_id_count'])
+        self.assertEqual(0, second_row['third_party_1_id_count'])
+        self.assertEqual(0, second_row['third_party_1_vehicle_id_count'])
         pass

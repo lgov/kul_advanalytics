@@ -7,6 +7,24 @@ def text_to_binary(col_name, bin_1, bin_0, df):
     return df[col_name].replace({bin_0:0,bin_1:1}, inplace=True)
 
 
+def add_extra_features(df):
+    # Add new features first, then drop all unneeded columns
+    # New feature: add a new column with the number of claims for this vehicle (claim_vehicle_id)
+    df['claim_vehicle_id_count'] = df.groupby(by='claim_vehicle_id')['claim_id'].transform('count')
+    df['policy_holder_id_count'] = df.groupby(by='policy_holder_id')['claim_id'].transform('count')
+    df['driver_id_count'] = df.groupby(by='driver_id')['claim_id'].transform('count')
+    df['driver_vehicle_id_count'] = df.groupby(by='driver_vehicle_id')['claim_id'].transform('count')
+    df['third_party_1_id_count'] = df.groupby(by='third_party_1_id')['claim_id'].transform('count')
+    df['third_party_1_vehicle_id_count'] = df.groupby(by='third_party_1_vehicle_id')['claim_id'].transform('count')
+
+    df['claim_vehicle_id_count'].fillna(0, inplace=True)
+    df['policy_holder_id_count'].fillna(0, inplace=True)
+    df['driver_id_count'].fillna(0, inplace=True)
+    df['driver_vehicle_id_count'].fillna(0, inplace=True)
+    df['third_party_1_id_count'].fillna(0, inplace=True)
+    df['third_party_1_vehicle_id_count'].fillna(0, inplace=True)
+    return df
+
 def update_dataset_features(df):
     # convert binary text variables into binary: {"Y":1, "N":0}
     for i in ["fraud", "claim_liable", "claim_police", "driver_injured"]:
@@ -45,14 +63,7 @@ def update_dataset_features(df):
     for i in YYYYMM_columns:
         df[i] = pd.to_datetime(df[i], format="%Y%m")
 
-    # Add new features first, then drop all unneeded columns
-    # New feature: add a new column with the number of claims for this vehicle (claim_vehicle_id)
-    df['claim_vehicle_id_count'] = df.groupby(by='claim_vehicle_id')['fraud'].transform('count')
-    df['policy_holder_id_count'] = df.groupby(by='policy_holder_id')['fraud'].transform('count')
-    df['driver_id_count'] = df.groupby(by='driver_id')['fraud'].transform('count')
-    df['driver_vehicle_id_count'] = df.groupby(by='driver_vehicle_id')['fraud'].transform('count')
-    df['third_party_1_id_count'] = df.groupby(by='third_party_1_id')['fraud'].transform('count')
-    df['third_party_1_vehicle_id_count'] = df.groupby(by='third_party_1_vehicle_id')['fraud'].transform('count')
+    df = add_extra_features(df)
 
     # dropped for now but can be added for futher improvement
     drop_temp = [
