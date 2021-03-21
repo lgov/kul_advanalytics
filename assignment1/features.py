@@ -45,6 +45,15 @@ def update_dataset_features(df):
     for i in YYYYMM_columns:
         df[i] = pd.to_datetime(df[i], format="%Y%m")
 
+    # Add new features first, then drop all unneeded columns
+    # New feature: add a new column with the number of claims for this vehicle (claim_vehicle_id)
+    df['claim_vehicle_id_count'] = df.groupby(by='claim_vehicle_id')['fraud'].transform('count')
+    df['policy_holder_id_count'] = df.groupby(by='policy_holder_id')['fraud'].transform('count')
+    df['driver_id_count'] = df.groupby(by='driver_id')['fraud'].transform('count')
+    df['driver_vehicle_id_count'] = df.groupby(by='driver_vehicle_id')['fraud'].transform('count')
+    df['third_party_1_id_count'] = df.groupby(by='third_party_1_id')['fraud'].transform('count')
+    df['third_party_1_vehicle_id_count'] = df.groupby(by='third_party_1_vehicle_id')['fraud'].transform('count')
+
     # dropped for now but can be added for futher improvement
     drop_temp = [
         "claim_postal_code",  # rural area
@@ -95,7 +104,6 @@ def update_dataset_features(df):
                     "driver_id",
                     "driver_expert_id",
                     "driver_vehicle_id",
-                    "claim_vehicle_id",
                     "third_party_1_id",
                     "third_party_1_vehicle_id",
                     "third_party_1_expert_id",
