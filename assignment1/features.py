@@ -23,6 +23,10 @@ def add_extra_features(df):
     df['driver_vehicle_id_count'].fillna(0, inplace=True)
     df['third_party_1_id_count'].fillna(0, inplace=True)
     df['third_party_1_vehicle_id_count'].fillna(0, inplace=True)
+
+    # Look up the involved experts in our blacklist-of-fraudulent-experts
+    df['blacklisted_expert_id'] = df.apply(lambda x:is_fraudulent_expert_id(x.driver_expert_id) or \
+              is_fraudulent_expert_id(x.policy_holder_expert_id), axis=1)
     return df
 
 def update_dataset_features(df):
@@ -127,3 +131,47 @@ def update_dataset_features(df):
     df.drop(columns=missing_over_90prct, inplace=True)
 
     return df
+
+
+def is_fraudulent_expert_id(expert_id):
+    """
+    This function maintains a list of expert_id's that are known to be involved in
+    fraudulent claims. This can be used as knowledge extracted manually from the
+    training set. TODO: how can we learn this?
+    :param expert_id: <string> id of the expert
+    :return: True if known involved in fraudulent cases, False if not
+    """
+    criminal_expert_ids = ["M2JkNDRlMTBiNDYzMDZmOTIyOWUyMTViM2YwMmUyMTk",
+    "M2NmODVkY2JkNDk4ZWRmYTRmOTM0NzNmMTUyZGE5Mjc",
+    "MjUyMmQ2ZTM2OTdlZWU5NzU3NjJhMTA1MGNmZDc2MDE",
+    "MmUzNGQxYTVjMGFiMDQ4OTY4MDZiOGY1NjU1NGExOTI",
+    "MmZkMTE1N2FhODdiYTI1ZDNlNzUxMTNhMDYwNTE1Yjk",
+    "MWJmNzg1ZmYxMjEyNzQ5ZTY5NDhhN2I2ZTA2ZWI3YWY",
+    "MWNlYzcyZDk3OWM5N2ZjZTFjYWNmZDQwZmY2MWU2OGE",
+    "NDUzN2I1YmYwYTRhM2FjZGVkMjdiMzg0N2MwOTdhNmI",
+    "NGE5OGQ4ZDc1NjFjNjg1NTIxZmRjNzI5N2YwY2FhY2M",
+    "NGYyM2U1ZmIyY2MxYWJmZWQ3OWZmOTRiYTZhZTEwNDQ",
+    "Njc0YWNlNzQyYjBiMDAwYzg4ZjAyMjE1MGUwY2EyNWM",
+    "NjYzNzBjODhlNGZiYjU0NzE0ZTQ5NjFmYTNhNjFjMzQ",
+    "NTUxNDM2MzdkMGZiZmYzYTcxYTEyNGNjNmJjNjJhYzE",
+    "ODFmNzhlNDY2MmU3YTk0NWZkNjQwYzU4N2EzZjQ0Yzg",
+    "OGE3ZTgyMTFhZDQzMGJlZDg2MWVjZTRkZTA5M2JlNTA",
+    "OGEwMzgzNzBiODVhZDRmZTUyMWFhZjkzMzU0NzdkZTg",
+    "OGIzNzgyMmQzYWEyNGViMDNlYzRkMzAxODcxMDdhOTI",
+    "OTliOTAzYWU3YzljYzdkYmVmNzNmYWMyZjNjNzQ5OWE",
+    "OWJiNmVkNjM5ZDFmOWY2YWMxNGQxZWQ1NDdlNDU0YWM",
+    "OWY4MWE5MGMzNmRkM2M2MGZmMDZmM2M4MDBhZTRjMWI",
+    "Y2ZkYTMzYWM1ZjQ0ZGM1M2Q2NGQ4ZTBlZWNmMzRhYzg",
+    "YjJjM2RhYjc5N2U1MmNhMzI4MmI0ZmRiMTk5MDcxMjI",
+    "YmMyZDQ4YmIwYWNlYjE1ZTAwYTIyMzUxYWFiMzk4NjM",
+    "YmNkZjNiZTQ1MmYzNGQ5YTRmNjI0N2U1YzdiOWUzYzE",
+    "YTQyNDg4MGU1MDgzYmNkNzZlZDkzYjVhODJmYmMyNmY",
+    "Yzc3Y2E0ZmRkZmMzZjMwNTYyNDRiNjRkYTZiYzMwMjE",
+    "YzhhMzJmM2RiNzdiYWE3NjI0NDU3Mjc1ZTNlYzJkOTU",
+    "ZDEyMDViM2NkN2I2N2ZmMWZmZjYwN2UxYjMxNzNhOGM",
+    "ZDU4ZDExMTNhYmM4YmNlY2QzZmNjOWJjMDRjMGNmZmQ",
+    "ZmRlZTE4NDVmOTg1YTc0MGViYjZhOGZhZGFiNmI2OWE",
+    "ZTZmNmNmMDkxZDM1MjFlYjdmNWE0YzRiY2Q0NGFkMzU",
+    "ZWI4YTBjYzMyOTQ3OTJiYzZhNmRiNjBmNjk5NjdjMWM"]
+
+    return expert_id in criminal_expert_ids

@@ -34,4 +34,8 @@ class TestFeatureEngineering(unittest.TestCase):
         self.assertEqual(0, second_row['driver_vehicle_id_count'])
         self.assertEqual(0, second_row['third_party_1_id_count'])
         self.assertEqual(0, second_row['third_party_1_vehicle_id_count'])
+
+        # The fourth row has a blacklisted driver expert id.
+        fourth_row = df.iloc[3]
+        self.assertTrue(fourth_row['blacklisted_expert_id'])
         pass
