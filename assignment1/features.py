@@ -27,6 +27,10 @@ def add_extra_features(df):
     # Look up the involved experts in our blacklist-of-fraudulent-experts
     df['blacklisted_expert_id'] = df.apply(lambda x:is_fraudulent_expert_id(x.driver_expert_id) or \
               is_fraudulent_expert_id(x.policy_holder_expert_id), axis=1)
+              
+    # Calculate age of policy_holder at time of accident
+    df['policy_holder_age'] = df["claim_date_occured"].dt.year - df["policy_holder_year_birth"]
+    
     return df
 
 def update_dataset_features(df):
