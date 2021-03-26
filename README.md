@@ -28,3 +28,4 @@ Not significant:
 * Treat policy_holder_expert_id and  driver_expert_id as factor  => now implemented as list of blacklisted experts
 * Treat claim_postal_code as factor
 * test
+* test2
