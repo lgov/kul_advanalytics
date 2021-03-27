@@ -3,6 +3,9 @@ import numpy as np
 
 
 # cleaning functions
+from sklearn.preprocessing import OneHotEncoder
+
+
 def text_to_binary(col_name, bin_1, bin_0, df):
     return df[col_name].replace({bin_0:0,bin_1:1}, inplace=True)
 
@@ -27,9 +30,19 @@ def add_extra_features(df):
     # Look up the involved experts in our blacklist-of-fraudulent-experts
     df['blacklisted_expert_id'] = df.apply(lambda x:is_fraudulent_expert_id(x.driver_expert_id) or \
               is_fraudulent_expert_id(x.policy_holder_expert_id), axis=1)
+
+    # Convert policy_type to dummy variables
+
     return df
 
 def update_dataset_features(df):
+    """
+    Add, remove and encode features from the insurance claim dataset for modelling.
+
+    :param df: dataframe with the original data
+    :return: df: dataframe with new columns
+             claim_cause_ohe: one hot encoder object for the claim_cause column
+    """
     # convert binary text variables into binary: {"Y":1, "N":0}
     for i in ["fraud", "claim_liable", "claim_police", "driver_injured"]:
         text_to_binary(i, "Y", "N", df)
@@ -47,8 +60,12 @@ def update_dataset_features(df):
     # replace "," with "." and convert to numeric
     df["claim_amount"] = pd.to_numeric(df["claim_amount"].str.replace(",", "."))
 
-    # get dummies for cat vars
-    df = pd.get_dummies(df, dummy_na=True, columns=["claim_cause"])
+    # create a one hot encoder to create the dummies and fit it to the data
+    # Note: use this method, so that we can use exactly the same one hot encoding
+    # also on the submission data
+    claim_cause_ohe = OneHotEncoder(handle_unknown='ignore', sparse=False)
+    claim_cause_ohe.fit(df[['claim_cause']])
+    df = encode_claim_cause(claim_cause_ohe, df)
 
     # format date
     YYYYMMDD_date_columns = ["claim_date_registered",
@@ -130,7 +147,43 @@ def update_dataset_features(df):
     missing_over_90prct = df.isna().sum().index[np.where(df.isna().sum() > 50000)]
     df.drop(columns=missing_over_90prct, inplace=True)
 
+    return df, claim_cause_ohe
+
+
+def encode_claim_cause(claim_cause_ohe, df):
+    """
+    Use a fitted OneHotEncoder for the claim_cause column and replace it with the
+    encode columns
+    To be fitted on the training set and applied both on training set and submission set.
+    :param claim_cause_ohe:
+    :param df:
+    :return: df
+    """
+    trf = claim_cause_ohe.transform(df[['claim_cause']])
+    nr_of_cols = len(trf[0])
+    col_names = ['cc%d' % i for i in range(1, nr_of_cols + 1)]
+    df2 = pd.DataFrame(trf, columns=col_names, index=df.index)
+    df = pd.concat([df, df2], axis='columns')
+    del df['claim_cause']
     return df
+
+
+# def encode_ph_postal_code(ohe, df):
+#     """
+#     Use a fitted OneHotEncoder for the policy_holder_postal_code column and replace it with the
+#     encode columns
+#     To be fitted on the training set and applied both on training set and submission set.
+#     :param ohe:
+#     :param df:
+#     :return: df
+#     """
+#     trf = ohe.transform(df['policy_holder_postal_code'].astype(str).str[:2])
+#     nr_of_cols = len(trf[0])
+#     col_names = ['phpc%d' % i for i in range(1, nr_of_cols + 1)]
+#     df2 = pd.DataFrame(trf, columns=col_names, index=df.index)
+#     df = pd.concat([df, df2], axis='columns')
+#     del df['policy_holder_postal_code']
+#     return df
 
 
 def is_fraudulent_expert_id(expert_id):
