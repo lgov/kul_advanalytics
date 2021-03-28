@@ -31,8 +31,9 @@ def add_extra_features(df):
     df['blacklisted_expert_id'] = df.apply(lambda x:is_fraudulent_expert_id(x.driver_expert_id) or \
               is_fraudulent_expert_id(x.policy_holder_expert_id), axis=1)
 
-    # Calculate age of policy_holder at time of accident
-    df['policy_holder_age'] = df["claim_date_occured"].dt.year - df["policy_holder_year_birth"]
+# Seems to have a negative effect on our score, removing.
+#    # Calculate age of policy_holder at time of accident
+#    df['policy_holder_age'] = df["claim_date_occured"].dt.year - df["policy_holder_year_birth"]
     
     return df
 
