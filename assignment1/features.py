@@ -10,6 +10,22 @@ def text_to_binary(col_name, bin_1, bin_0, df):
     return df[col_name].replace({bin_0:0,bin_1:1}, inplace=True)
 
 
+def convert_pct_bitmap_to_features(row):
+    """
+    For each row, convert the bitmap in policy_coverage_type to individual features
+    e.g. #111110000 becomes pct1 pct2 pct3 pct4 pct5 pct6 pct7 pct8 pct9
+                               1    1    1    1    1    0    0    0    0
+    :param row: one row in the dataframe
+    :return: dataframe with new features
+    """
+
+    # start counting at 1 so we automatically skip the first # character.
+    for i in range(1,10):
+        bitmap = row['policy_coverage_type']
+        row['pct%d' % i] = bitmap[i]
+    return row
+
+
 def add_extra_features(df):
     # Add new features first, then drop all unneeded columns
     # New feature: add a new column with the number of claims for this vehicle (claim_vehicle_id)
@@ -34,7 +50,13 @@ def add_extra_features(df):
 # Seems to have a negative effect on our score, removing.
 #    # Calculate age of policy_holder at time of accident
 #    df['policy_holder_age'] = df["claim_date_occured"].dt.year - df["policy_holder_year_birth"]
-    
+
+    # Split the policy_coverage_type bitmap in individual features.
+    # e.g. #111110000 becomes pct1 pct2 pct3 pct4 pct5 pct6 pct7 pct8 pct9
+    #                            1    1    1    1    1    0    0    0    0
+    df = df.apply(func=convert_pct_bitmap_to_features, axis=1)
+    del df['policy_coverage_type']
+
     return df
 
 def update_dataset_features(df):
@@ -111,7 +133,7 @@ def update_dataset_features(df):
         "repair_year_birth",
         "repair_country",
         "repair_sla",
-        "policy_coverage_type",
+#        "policy_coverage_type",
         "driver_postal_code",
         "driver_form",
         "driver_year_birth",
