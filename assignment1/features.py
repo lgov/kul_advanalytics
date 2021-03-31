@@ -10,20 +10,21 @@ def text_to_binary(col_name, bin_1, bin_0, df):
     return df[col_name].replace({bin_0:0,bin_1:1}, inplace=True)
 
 
-def convert_pct_bitmap_to_features(row):
+def convert_pct_bitmap_to_features(df):
     """
-    For each row, convert the bitmap in policy_coverage_type to individual features
+    Convert the bitmap in policy_coverage_type to individual features
     e.g. #111110000 becomes pct1 pct2 pct3 pct4 pct5 pct6 pct7 pct8 pct9
                                1    1    1    1    1    0    0    0    0
-    :param row: one row in the dataframe
+    :param df: a dataframe
     :return: dataframe with new features
     """
-
-    # start counting at 1 so we automatically skip the first # character.
-    for i in range(1,10):
-        bitmap = row['policy_coverage_type']
-        row['pct%d' % i] = bitmap[i]
-    return row
+    # split text of form #111110000 into separate columns and drop redundant columns
+    bit_df = df['policy_coverage_type'].str.split('', expand=True).drop(columns=[0,1,11])
+    # rename into wished columns
+    bit_df.columns = ["pct1", "pct2", "pct3", "pct4", "pct5", "pct6", "pct7", "pct8", "pct9"]
+    # merge with original dataframe (can be improved because merge is slow)
+    df = df.drop(columns=['policy_coverage_type']).merge(bit_df, left_index=True, right_index=True)
+    return df
 
 
 def add_extra_features(df):
@@ -44,8 +45,7 @@ def add_extra_features(df):
     df['third_party_1_vehicle_id_count'].fillna(0, inplace=True)
 
     # Look up the involved experts in our blacklist-of-fraudulent-experts
-    df['blacklisted_expert_id'] = df.apply(lambda x:is_fraudulent_expert_id(x.driver_expert_id) or \
-              is_fraudulent_expert_id(x.policy_holder_expert_id), axis=1)
+    df['blacklisted_expert_id'] = [((is_fraudulent_expert_id(i)) or (is_fraudulent_expert_id(j)))for i, j in zip(df["driver_expert_id"],df["policy_holder_expert_id"])]
 
 # Seems to have a negative effect on our score, removing.
 #    # Calculate age of policy_holder at time of accident
@@ -54,8 +54,7 @@ def add_extra_features(df):
     # Split the policy_coverage_type bitmap in individual features.
     # e.g. #111110000 becomes pct1 pct2 pct3 pct4 pct5 pct6 pct7 pct8 pct9
     #                            1    1    1    1    1    0    0    0    0
-    df = df.apply(func=convert_pct_bitmap_to_features, axis=1)
-    del df['policy_coverage_type']
+    df = convert_pct_bitmap_to_features(df)
 
     return df
 
