@@ -137,8 +137,7 @@ def update_dataset_features(df):
         "driver_form",
         "driver_year_birth",
         "driver_country",
-        "driver_injured",
-        "claim_amount"
+        "driver_injured"
     ]
 
     # date variables are also dropped for first analysis
