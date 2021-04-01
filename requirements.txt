@@ -1,5 +1,0 @@
-jupyter
-pandas
-scikit-learn
-matplotlib
-imblearn
