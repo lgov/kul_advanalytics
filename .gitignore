@@ -134,3 +134,5 @@ submission*.csv
 
 # Mac OS X specific
 .DS_Store
+
+recipes.zip
