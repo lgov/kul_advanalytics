@@ -14,7 +14,7 @@ class TestFeatureEngineering(unittest.TestCase):
     def test_add_count_of_claim_id(self):
         df = pd.read_csv("unittest.csv", sep=";", encoding='utf-8')
         print(df['claim_vehicle_id'])
-        df, ccohe = update_dataset_features(df)
+        df, ccohe, repair_form_ohe = update_dataset_features(df)
 
         # The first row is duplicated, so we expect 2's for the counts
         first_row = df.iloc[0]
