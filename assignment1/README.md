@@ -30,3 +30,4 @@ Not significant:
 * Fraud seems more prevalent in higher claim_vehicle_cyl
 * Postal code seems relevant, for instance many fraud cases where claimed in Moeskroen (not surprisingly)
 * Try XGBoost
+* Create extra "anomaly feature" using isolation forests (see recording 7 of class at 1:03:00)
