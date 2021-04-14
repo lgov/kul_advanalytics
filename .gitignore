@@ -136,3 +136,6 @@ submission*.csv
 .DS_Store
 
 recipes.zip
+
+# images
+*.png
