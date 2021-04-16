@@ -1,3 +1,5 @@
+import logging
+
 import torch
 from torchvision import datasets, models, transforms
 
@@ -9,6 +11,10 @@ import shutil
 import splitfolders
 import time
 import copy
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(message)s')  # include timestamp
+logging.getLogger("matplotlib.font_manager").setLevel(logging.WARNING)
 
 
 def data_labeler(target_dir:str, source_dir:str, bins:int, target_name:str,
@@ -36,9 +42,15 @@ def data_labeler(target_dir:str, source_dir:str, bins:int, target_name:str,
     for i in labels:
         os.mkdir(os.path.join(target_dir,str(i)))
     print(f"target directories created at: {target_dir}")
-    for pic_id in [i.split('.')[0] for i in os.listdir(source_dir)]:
+    # Copy each image file to the (per label) output folder
+    for source_file in os.listdir(source_dir):
+        source_path = os.path.join(source_dir, source_file)
+        if os.stat(source_path).st_size == 0:
+            logging.warning("File %s is empty. Skipping!" % source_path)
+            continue
+        pic_id = source_file.split('.')[0]
         label = str(list(meta_data[meta_data['photo_id'] == pic_id][f"{target_name}_binned"])[0])
-        shutil.copy(os.path.join(source_dir, f'{pic_id}.png'), os.path.join(target_dir, label))
+        shutil.copy(source_path, os.path.join(target_dir, label))
     # split image-folder into train test split to adhere PyTorch structure
     splitfolders.ratio(target_dir, output=f"{target_dir}_splitted", seed=43, ratio=(.8, .1, .1))
     print(f"Splitting and labeling done. Results can be found at: {target_dir}_splitted")
