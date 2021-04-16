@@ -16,11 +16,6 @@ from torch.optim import lr_scheduler
 # custom imports
 from helper import InstagramDataset, data_labeler, ResNet
 
-# In[3]:
-# In[10]:
-os.getcwd()
-
-
 # # Labeling
 bins = 10
 # note that splitting the data into split, val, test and reorganizing folders accordingly is a slow process
