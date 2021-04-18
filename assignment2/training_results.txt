@@ -1,0 +1,74 @@
+1. First network, no softmax layer
+----------------------------------
+Epoch 0/13
+----------
+train Loss: 2.3243 Acc: 0.1092
+val Loss: 2.3109 Acc: 0.1236
+
+Epoch 1/13
+----------
+train Loss: 2.3011 Acc: 0.1254
+val Loss: 2.3100 Acc: 0.1270
+
+Epoch 2/13
+----------
+train Loss: 2.2911 Acc: 0.1312
+val Loss: 2.3155 Acc: 0.1176
+
+Epoch 3/13
+----------
+train Loss: 2.2788 Acc: 0.1413
+val Loss: 2.3059 Acc: 0.1339
+
+Epoch 4/13
+----------
+train Loss: 2.2696 Acc: 0.1516
+val Loss: 2.3016 Acc: 0.1356
+
+Epoch 5/13
+----------
+train Loss: 2.2620 Acc: 0.1604
+val Loss: 2.3029 Acc: 0.1219
+
+Epoch 6/13
+----------
+train Loss: 2.2532 Acc: 0.1604
+val Loss: 2.2972 Acc: 0.1408
+
+Epoch 7/13
+----------
+train Loss: 2.2480 Acc: 0.1662
+val Loss: 2.2969 Acc: 0.1373
+
+Epoch 8/13
+----------
+train Loss: 2.2480 Acc: 0.1638
+val Loss: 2.2972 Acc: 0.1382
+
+Epoch 9/13
+----------
+train Loss: 2.2488 Acc: 0.1662
+val Loss: 2.2960 Acc: 0.1399
+
+Epoch 10/13
+----------
+train Loss: 2.2495 Acc: 0.1600
+val Loss: 2.2977 Acc: 0.1356
+
+Epoch 11/13
+----------
+train Loss: 2.2463 Acc: 0.1706
+val Loss: 2.2985 Acc: 0.1348
+
+Epoch 12/13
+----------
+train Loss: 2.2456 Acc: 0.1652
+val Loss: 2.2975 Acc: 0.1365
+
+Epoch 13/13
+----------
+train Loss: 2.2446 Acc: 0.1674
+val Loss: 2.2977 Acc: 0.1356
+
+Training complete in 8m 38s
+Best val Acc: 0.140773
