@@ -140,3 +140,6 @@ recipes.zip
 
 # images
 *.png
+*.jpg
+*.jpeg
+*.gif
