@@ -9,7 +9,7 @@ train_df,val_df = train_test_split(df, test_size=0.2,  random_state=96)
 
 train_data = TabularDataset(train_df)
 val_data = TabularDataset(val_df)
-predictor = TabularPredictor(label='fraud').fit(train_data, time_limit=1200,
+predictor = TabularPredictor(label='fraud').fit(train_data, time_limit=3600,
                                                 num_bag_folds=5, num_bag_sets=1, num_stack_levels=1)  # Fit models for 120s
 leaderboard = predictor.leaderboard(val_data)
 print(leaderboard)
@@ -22,4 +22,4 @@ submission = submission.reset_index()[['claim_id']]
 submission["prediction"] = submit_pred['prediction']
 submission.columns = ["ID", "PROB"]
 print(submission)
-submission.to_csv("submission_V0.71.csv", sep=',', index=False)
+submission.to_csv("submission_V0.72.csv", sep=',', index=False)
