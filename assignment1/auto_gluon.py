@@ -13,8 +13,9 @@ val_data = TabularDataset(val_df)
 # https://auto.gluon.ai/stable/tutorials/tabular_prediction/tabular-quickstart.html#maximizing-predictive-performance
 # This gives a very bad result, don't use it as is.
 # metric = 'average_precision'
-predictor = TabularPredictor(label='fraud').fit(train_data, time_limit=3600,
-                                                num_bag_folds=5, num_bag_sets=1, num_stack_levels=1)  # Fit models for 120s
+# auto_stack: let AutoGluon find the best bagging/stacking parameters
+predictor = TabularPredictor(label='fraud').fit(train_data, time_limit=3600, presets='best_quality',
+                                                auto_stack=True)  # Fit models for 3600s
 leaderboard = predictor.leaderboard(val_data)
 print(leaderboard)
 
