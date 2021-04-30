@@ -7,6 +7,9 @@
 # * general example to follow: see [here](https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html), [here](https://towardsdatascience.com/a-practical-example-in-transfer-learning-with-pytorch-846bb835f2db), or [here](https://towardsdatascience.com/transfer-learning-with-convolutional-neural-networks-in-pytorch-dd09190245ce)
 
 import os
+from multiprocessing.spawn import freeze_support
+
+freeze_support()
 
 # pytorch stuff
 import torch.nn as nn
@@ -30,8 +33,8 @@ data_labeler(target_dir='recipes_labeled', source_dir='recipes/recipes/', bins=b
 # see docstring for further information
 insta_data = InstagramDataset('recipes_labeled_splitted')
 dataloaders = insta_data.dataloaders
-# check random image, works especially well if you're hungry... :)
-insta_data.imshow(15)
+# # check random image, works especially well if you're hungry... :)
+# insta_data.imshow(15)
 
 
 # # The model
@@ -45,12 +48,12 @@ for param in model.parameters():
 
 # extract number of nodes in last fc layer and add own fc layer
 num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, bins) # from 2048 to 10 (i.e. our target)
+model.fc = nn.Linear(num_ftrs, 1) # from 2048 to 10 (i.e. our target)
 
 model = model.to(resn.device)
 
 # set objective criterion
-criterion = nn.CrossEntropyLoss()
+criterion = nn.MSELoss()
 
 # Observe that only params in last fc layer are optimized
 optimizer_ft = optim.SGD(model.fc.parameters(), lr=0.001, momentum=0.9)
