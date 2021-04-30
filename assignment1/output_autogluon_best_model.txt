@@ -1,0 +1,227 @@
+(venv) lgo@lgo-vmhost:~/dev/kuleuven/kul_advanalytics/assignment1$ python3 ./auto_gluon.py
+No path specified. Models will be saved in: "AutogluonModels/ag-20210430_130113/"
+Beginning AutoGluon training ... Time limit = 3600s
+AutoGluon will save models to "AutogluonModels/ag-20210430_130113/"
+AutoGluon Version:  0.2.0
+Train Data Rows:    44370
+Train Data Columns: 76
+Preprocessing data ...
+AutoGluon infers your prediction problem is: 'binary' (because only two unique label-values observed).
+	2 unique label values:  ['N', 'Y']
+	If 'binary' is not the correct problem_type, please manually specify the problem_type argument in fit() (You may specify problem_type as one of: ['binary', 'multiclass', 'regression'])
+Selected class <--> label mapping:  class 1 = Y, class 0 = N
+	Note: For your binary classification, AutoGluon arbitrarily selected which label-value represents positive (Y) vs negative (N) class.
+	To explicitly set the positive_class, either rename classes to 1 and 0, or specify positive_class in Predictor init.
+Using Feature Generators to preprocess the data ...
+Fitting AutoMLPipelineFeatureGenerator...
+	Available Memory:                    64553.26 MB
+	Train Data (Original)  Memory Usage: 109.72 MB (0.2% of available memory)
+	Inferring data type of each feature based on column values. Set feature_metadata_in to manually specify special dtypes of the features.
+	Stage 1 Generators:
+		Fitting AsTypeFeatureGenerator...
+	Stage 2 Generators:
+		Fitting FillNaFeatureGenerator...
+	Stage 3 Generators:
+		Fitting IdentityFeatureGenerator...
+		Fitting CategoryFeatureGenerator...
+			Fitting CategoryMemoryMinimizeFeatureGenerator...
+	Stage 4 Generators:
+		Fitting DropUniqueFeatureGenerator...
+	Useless Original Features (Count: 1): ['third_party_3_expert_id']
+		These features carry no predictive signal and should be manually investigated.
+		This is typically a feature which has the same value for all rows.
+		These features do not need to be present at inference time.
+	Types of features in original data (raw dtype, special dtypes):
+		('float', [])  : 24 | ['claim_time_occured', 'claim_language', 'claim_vehicle_date_inuse', 'claim_vehicle_cyl', 'claim_vehicle_load', ...]
+		('int', [])    :  9 | ['claim_id', 'claim_date_registered', 'claim_date_occured', 'claim_postal_code', 'claim_num_injured', ...]
+		('object', []) : 42 | ['claim_cause', 'claim_liable', 'claim_police', 'claim_alcohol', 'claim_vehicle_id', ...]
+	Types of features in processed data (raw dtype, special dtypes):
+		('category', []) : 42 | ['claim_cause', 'claim_liable', 'claim_police', 'claim_alcohol', 'claim_vehicle_id', ...]
+		('float', [])    : 24 | ['claim_time_occured', 'claim_language', 'claim_vehicle_date_inuse', 'claim_vehicle_cyl', 'claim_vehicle_load', ...]
+		('int', [])      :  9 | ['claim_id', 'claim_date_registered', 'claim_date_occured', 'claim_postal_code', 'claim_num_injured', ...]
+	2.8s = Fit runtime
+	75 features in original data used to generate 75 features in processed data.
+	Train Data (Processed) Memory Usage: 15.57 MB (0.0% of available memory)
+Data preprocessing and feature engineering runtime = 2.92s ...
+AutoGluon will gauge predictive performance using evaluation metric: 'accuracy'
+	To change this, specify the eval_metric argument of fit()
+Fitting model: KNeighborsUnif_BAG_L1 ... Training model for up to 2397.45s of the 3597.08s of remaining time.
+	0.9942	 = Validation accuracy score
+	0.04s	 = Training runtime
+	32.66s	 = Validation runtime
+Fitting model: KNeighborsDist_BAG_L1 ... Training model for up to 2364.02s of the 3563.65s of remaining time.
+	0.9941	 = Validation accuracy score
+	0.02s	 = Training runtime
+	31.56s	 = Validation runtime
+Fitting model: LightGBMXT_BAG_L1 ... Training model for up to 2331.24s of the 3530.86s of remaining time.
+	0.9956	 = Validation accuracy score
+	3.24s	 = Training runtime
+	0.32s	 = Validation runtime
+Fitting model: LightGBM_BAG_L1 ... Training model for up to 2327.44s of the 3527.06s of remaining time.
+	0.9951	 = Validation accuracy score
+	3.02s	 = Training runtime
+	0.34s	 = Validation runtime
+Fitting model: RandomForestGini_BAG_L1 ... Training model for up to 2323.77s of the 3523.39s of remaining time.
+	0.9945	 = Validation accuracy score
+	1.94s	 = Training runtime
+	1.19s	 = Validation runtime
+Fitting model: RandomForestEntr_BAG_L1 ... Training model for up to 2320.38s of the 3520.0s of remaining time.
+	0.9945	 = Validation accuracy score
+	1.92s	 = Training runtime
+	1.2s	 = Validation runtime
+Fitting model: CatBoost_BAG_L1 ... Training model for up to 2316.89s of the 3516.52s of remaining time.
+	0.9961	 = Validation accuracy score
+	20.1s	 = Training runtime
+	0.75s	 = Validation runtime
+Fitting model: ExtraTreesGini_BAG_L1 ... Training model for up to 2295.91s of the 3495.54s of remaining time.
+	0.9943	 = Validation accuracy score
+	1.24s	 = Training runtime
+	1.27s	 = Validation runtime
+Fitting model: ExtraTreesEntr_BAG_L1 ... Training model for up to 2293.08s of the 3492.71s of remaining time.
+	0.9944	 = Validation accuracy score
+	1.13s	 = Training runtime
+	1.26s	 = Validation runtime
+Fitting model: NeuralNetFastAI_BAG_L1 ... Training model for up to 2290.38s of the 3490.0s of remaining time.
+	Warning: Exception caused NeuralNetFastAI_BAG_L1 to fail during training (ImportError)... Skipping this model.
+		Import fastai failed. A quick tip is to install via `pip install fastai==2.*`. If you are using Mac OSX, please use this torch version to avoid compatibility issues: `pip install torch==1.6.0`.
+Fitting model: XGBoost_BAG_L1 ... Training model for up to 2290.33s of the 3489.95s of remaining time.
+	0.9959	 = Validation accuracy score
+	10.48s	 = Training runtime
+	1.04s	 = Validation runtime
+Fitting model: NeuralNetMXNet_BAG_L1 ... Training model for up to 2278.44s of the 3478.07s of remaining time.
+	0.9959	 = Validation accuracy score
+	898.8s	 = Training runtime
+	10.68s	 = Validation runtime
+Fitting model: LightGBMLarge_BAG_L1 ... Training model for up to 1368.01s of the 2567.63s of remaining time.
+	0.9944	 = Validation accuracy score
+	3.25s	 = Training runtime
+	0.32s	 = Validation runtime
+Fitting model: WeightedEnsemble_L2 ... Training model for up to 360.0s of the 2563.84s of remaining time.
+	0.9961	 = Validation accuracy score
+	11.63s	 = Training runtime
+	0.05s	 = Validation runtime
+Fitting model: KNeighborsUnif_BAG_L2 ... Training model for up to 2551.47s of the 2551.45s of remaining time.
+	0.9942	 = Validation accuracy score
+	0.02s	 = Training runtime
+	31.74s	 = Validation runtime
+Fitting model: KNeighborsDist_BAG_L2 ... Training model for up to 2519.06s of the 2519.05s of remaining time.
+	0.9941	 = Validation accuracy score
+	0.04s	 = Training runtime
+	32.19s	 = Validation runtime
+Fitting model: LightGBMXT_BAG_L2 ... Training model for up to 2485.62s of the 2485.6s of remaining time.
+	0.9956	 = Validation accuracy score
+	1.91s	 = Training runtime
+	0.29s	 = Validation runtime
+Fitting model: LightGBM_BAG_L2 ... Training model for up to 2483.22s of the 2483.2s of remaining time.
+	0.9959	 = Validation accuracy score
+	2.26s	 = Training runtime
+	0.3s	 = Validation runtime
+Fitting model: RandomForestGini_BAG_L2 ... Training model for up to 2480.46s of the 2480.45s of remaining time.
+	0.9962	 = Validation accuracy score
+	3.13s	 = Training runtime
+	1.29s	 = Validation runtime
+Fitting model: RandomForestEntr_BAG_L2 ... Training model for up to 2475.75s of the 2475.73s of remaining time.
+	0.9961	 = Validation accuracy score
+	2.63s	 = Training runtime
+	1.25s	 = Validation runtime
+Fitting model: CatBoost_BAG_L2 ... Training model for up to 2471.58s of the 2471.57s of remaining time.
+	0.9962	 = Validation accuracy score
+	18.23s	 = Training runtime
+	0.74s	 = Validation runtime
+Fitting model: ExtraTreesGini_BAG_L2 ... Training model for up to 2452.44s of the 2452.43s of remaining time.
+	0.9961	 = Validation accuracy score
+	1.43s	 = Training runtime
+	1.32s	 = Validation runtime
+Fitting model: ExtraTreesEntr_BAG_L2 ... Training model for up to 2449.35s of the 2449.34s of remaining time.
+	0.9961	 = Validation accuracy score
+	1.33s	 = Training runtime
+	1.38s	 = Validation runtime
+Fitting model: NeuralNetFastAI_BAG_L2 ... Training model for up to 2446.37s of the 2446.36s of remaining time.
+	Warning: Exception caused NeuralNetFastAI_BAG_L2 to fail during training (ImportError)... Skipping this model.
+		Import fastai failed. A quick tip is to install via `pip install fastai==2.*`. If you are using Mac OSX, please use this torch version to avoid compatibility issues: `pip install torch==1.6.0`.
+Fitting model: XGBoost_BAG_L2 ... Training model for up to 2446.36s of the 2446.34s of remaining time.
+	0.9961	 = Validation accuracy score
+	13.05s	 = Training runtime
+	1.13s	 = Validation runtime
+Fitting model: NeuralNetMXNet_BAG_L2 ... Training model for up to 2431.87s of the 2431.86s of remaining time.
+	0.9959	 = Validation accuracy score
+	1074.15s	 = Training runtime
+	10.8s	 = Validation runtime
+Fitting model: LightGBMLarge_BAG_L2 ... Training model for up to 1346.0s of the 1345.98s of remaining time.
+	0.9957	 = Validation accuracy score
+	3.5s	 = Training runtime
+	0.31s	 = Validation runtime
+Fitting model: WeightedEnsemble_L3 ... Training model for up to 360.0s of the 1341.86s of remaining time.
+	0.9962	 = Validation accuracy score
+	11.67s	 = Training runtime
+	0.05s	 = Validation runtime
+AutoGluon training complete, total runtime = 2269.94s ...
+TabularPredictor saved. To load, use: predictor = TabularPredictor.load("AutogluonModels/ag-20210430_130113/")
+                      model  score_test  score_val  pred_time_test  pred_time_val     fit_time  pred_time_test_marginal  pred_time_val_marginal  fit_time_marginal  stack_level  can_infer  fit_order
+0   RandomForestGini_BAG_L2    0.996665   0.996169       33.213639      83.889095   948.315187                 0.136179                1.292986           3.130846            2       True         18
+1           CatBoost_BAG_L2    0.996574   0.996191       33.568956      83.337730   963.415008                 0.491496                0.741621          18.230668            2       True         20
+2       WeightedEnsemble_L3    0.996574   0.996191       33.570343      83.384999   975.088634                 0.001387                0.047269          11.673625            3       True         26
+3           CatBoost_BAG_L1    0.996484   0.996101        0.472597       0.748106    20.098394                 0.472597                0.748106          20.098394            1       True          7
+4       WeightedEnsemble_L2    0.996484   0.996124        1.900872       1.836864    42.211656                 0.002187                0.047606          11.634562            2       True         13
+5   RandomForestEntr_BAG_L2    0.996484   0.996101       33.212389      83.846944   947.815787                 0.134930                1.250835           2.631446            2       True         19
+6            XGBoost_BAG_L2    0.996484   0.996146       34.590147      83.727967   958.234212                 1.512688                1.131858          13.049872            2       True         23
+7           LightGBM_BAG_L2    0.996394   0.995921       33.438416      82.896120   947.446778                 0.360956                0.300012           2.262438            2       True         17
+8         LightGBMXT_BAG_L1    0.996304   0.995583        0.394270       0.315796     3.238081                 0.394270                0.315796           3.238081            1       True          3
+9     ExtraTreesEntr_BAG_L2    0.996304   0.996124       33.215628      83.979247   946.512534                 0.138169                1.383139           1.328194            2       True         22
+10           XGBoost_BAG_L1    0.996214   0.995876        1.426088       1.041153    10.478699                 1.426088                1.041153          10.478699            1       True         10
+11     LightGBMLarge_BAG_L2    0.996214   0.995695       33.452126      82.903652   948.686385                 0.374666                0.307544           3.502044            2       True         25
+12    ExtraTreesGini_BAG_L2    0.996124   0.996124       33.218211      83.911768   946.616108                 0.140752                1.315660           1.431768            2       True         21
+13        LightGBMXT_BAG_L2    0.996124   0.995560       33.424231      82.888075   947.092039                 0.346771                0.291967           1.907699            2       True         16
+14          LightGBM_BAG_L1    0.996034   0.995064        0.384593       0.336684     3.023951                 0.384593                0.336684           3.023951            1       True          4
+15  RandomForestEntr_BAG_L1    0.995132   0.994456        0.133281       1.202955     1.924970                 0.133281                1.202955           1.924970            1       True          6
+16  RandomForestGini_BAG_L1    0.995132   0.994501        0.166776       1.194472     1.940849                 0.166776                1.194472           1.940849            1       True          5
+17     LightGBMLarge_BAG_L1    0.995042   0.994366        0.352475       0.319694     3.252989                 0.352475                0.319694           3.252989            1       True         12
+18    ExtraTreesEntr_BAG_L1    0.994952   0.994366        0.137066       1.261088     1.129607                 0.137066                1.261088           1.129607            1       True          9
+19    ExtraTreesGini_BAG_L1    0.994952   0.994320        0.142391       1.271968     1.237342                 0.142391                1.271968           1.237342            1       True          8
+20    KNeighborsUnif_BAG_L1    0.994952   0.994230        8.313058      32.660990     0.035262                 8.313058               32.660990           0.035262            1       True          1
+21    NeuralNetMXNet_BAG_L1    0.994952   0.995943       13.324906      10.684325   898.804857                13.324906               10.684325         898.804857            1       True         11
+22    KNeighborsUnif_BAG_L2    0.994952   0.994230       41.473865     114.331437   945.207904                 8.396406               31.735329           0.023564            2       True         14
+23    NeuralNetMXNet_BAG_L2    0.994952   0.995943       46.457371      93.393201  2019.332007                13.379912               10.797092        1074.147667            2       True         24
+24    KNeighborsDist_BAG_L1    0.994862   0.994118        7.829958      31.558877     0.019339                 7.829958               31.558877           0.019339            1       True          2
+25    KNeighborsDist_BAG_L2    0.994862   0.994118       41.221565     114.789229   945.220387                 8.144105               32.193121           0.036047            2       True         15
+                      model  score_test  score_val  pred_time_test  pred_time_val     fit_time  pred_time_test_marginal  pred_time_val_marginal  fit_time_marginal  stack_level  can_infer  fit_order
+0   RandomForestGini_BAG_L2    0.996665   0.996169       33.213639      83.889095   948.315187                 0.136179                1.292986           3.130846            2       True         18
+1           CatBoost_BAG_L2    0.996574   0.996191       33.568956      83.337730   963.415008                 0.491496                0.741621          18.230668            2       True         20
+2       WeightedEnsemble_L3    0.996574   0.996191       33.570343      83.384999   975.088634                 0.001387                0.047269          11.673625            3       True         26
+3           CatBoost_BAG_L1    0.996484   0.996101        0.472597       0.748106    20.098394                 0.472597                0.748106          20.098394            1       True          7
+4       WeightedEnsemble_L2    0.996484   0.996124        1.900872       1.836864    42.211656                 0.002187                0.047606          11.634562            2       True         13
+5   RandomForestEntr_BAG_L2    0.996484   0.996101       33.212389      83.846944   947.815787                 0.134930                1.250835           2.631446            2       True         19
+6            XGBoost_BAG_L2    0.996484   0.996146       34.590147      83.727967   958.234212                 1.512688                1.131858          13.049872            2       True         23
+7           LightGBM_BAG_L2    0.996394   0.995921       33.438416      82.896120   947.446778                 0.360956                0.300012           2.262438            2       True         17
+8         LightGBMXT_BAG_L1    0.996304   0.995583        0.394270       0.315796     3.238081                 0.394270                0.315796           3.238081            1       True          3
+9     ExtraTreesEntr_BAG_L2    0.996304   0.996124       33.215628      83.979247   946.512534                 0.138169                1.383139           1.328194            2       True         22
+10           XGBoost_BAG_L1    0.996214   0.995876        1.426088       1.041153    10.478699                 1.426088                1.041153          10.478699            1       True         10
+11     LightGBMLarge_BAG_L2    0.996214   0.995695       33.452126      82.903652   948.686385                 0.374666                0.307544           3.502044            2       True         25
+12    ExtraTreesGini_BAG_L2    0.996124   0.996124       33.218211      83.911768   946.616108                 0.140752                1.315660           1.431768            2       True         21
+13        LightGBMXT_BAG_L2    0.996124   0.995560       33.424231      82.888075   947.092039                 0.346771                0.291967           1.907699            2       True         16
+14          LightGBM_BAG_L1    0.996034   0.995064        0.384593       0.336684     3.023951                 0.384593                0.336684           3.023951            1       True          4
+15  RandomForestEntr_BAG_L1    0.995132   0.994456        0.133281       1.202955     1.924970                 0.133281                1.202955           1.924970            1       True          6
+16  RandomForestGini_BAG_L1    0.995132   0.994501        0.166776       1.194472     1.940849                 0.166776                1.194472           1.940849            1       True          5
+17     LightGBMLarge_BAG_L1    0.995042   0.994366        0.352475       0.319694     3.252989                 0.352475                0.319694           3.252989            1       True         12
+18    ExtraTreesEntr_BAG_L1    0.994952   0.994366        0.137066       1.261088     1.129607                 0.137066                1.261088           1.129607            1       True          9
+19    ExtraTreesGini_BAG_L1    0.994952   0.994320        0.142391       1.271968     1.237342                 0.142391                1.271968           1.237342            1       True          8
+20    KNeighborsUnif_BAG_L1    0.994952   0.994230        8.313058      32.660990     0.035262                 8.313058               32.660990           0.035262            1       True          1
+21    NeuralNetMXNet_BAG_L1    0.994952   0.995943       13.324906      10.684325   898.804857                13.324906               10.684325         898.804857            1       True         11
+22    KNeighborsUnif_BAG_L2    0.994952   0.994230       41.473865     114.331437   945.207904                 8.396406               31.735329           0.023564            2       True         14
+23    NeuralNetMXNet_BAG_L2    0.994952   0.995943       46.457371      93.393201  2019.332007                13.379912               10.797092        1074.147667            2       True         24
+24    KNeighborsDist_BAG_L1    0.994862   0.994118        7.829958      31.558877     0.019339                 7.829958               31.558877           0.019339            1       True          2
+25    KNeighborsDist_BAG_L2    0.994862   0.994118       41.221565     114.789229   945.220387                 8.144105               32.193121           0.036047            2       True         15
+          ID      PROB
+0      65469  0.019342
+1      65470  0.020336
+2      65471  0.018834
+3      65472  0.021777
+4      65473  0.019135
+...      ...       ...
+29950  95422  0.624843
+29951  95423  0.019555
+29952  95424  0.026058
+29953  95425  0.023083
+29954  95426  0.627543
+
+[29955 rows x 2 columns]
