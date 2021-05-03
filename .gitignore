@@ -132,6 +132,10 @@ dmypy.json
 # Don't store our submission .csv files in git.
 submission*.csv
 processed*.csv
+*cleaned.csv
+output*.json
+output*.txt
+submit.csv
 
 # Mac OS X specific
 .DS_Store
