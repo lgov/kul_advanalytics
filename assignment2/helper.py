@@ -23,11 +23,17 @@ def data_labeler(target_dir:str, source_dir:str, bins:int, target_name:str,
     '''
     # read the metadata and bin the target into deciles using pandas qcut
     meta_data = pd.read_csv(metadata_path, sep=sep)
-    meta_data[f'{target_name}_binned'] = pd.qcut(meta_data[target_name], q=bins, precision=0)
+    meta_data[f'{target_name}_binned'] = meta_data['likes']
     print("bins created")
-    meta_data[f'{target_name}_binned'].value_counts().plot(kind='bar')
-    plt.show()
+    # meta_data[f'{target_name}_binned'].value_counts().plot(kind='bar')
+    # plt.show()
     labels = [str(i) for i in set(meta_data[f'{target_name}_binned'])]
+
+    # # Assume that the previous time we ran this script the labelled image folder
+    # # was created succesfully.
+    # if os.path.isdir(target_dir):
+    #     return
+
     # overwrites dir if already existing
     if os.path.isdir(target_dir):
         shutil.rmtree(target_dir)
@@ -92,7 +98,7 @@ class InstagramDataset:
                                                        self.transform[x]) for x in ['train', 'val', 'test']
                                }
         self.dataloaders = {x: torch.utils.data.DataLoader(self.image_datasets[x], batch_size=BATCHSIZE,
-                                                           shuffle=True, num_workers=4)
+                                                           shuffle=True, num_workers=0)
                             for x in ['train', 'val', 'test']
                             }
         self.dataset_sizes = {x: len(self.image_datasets[x]) for x in ['train', 'val', 'test']}
@@ -113,7 +119,7 @@ class InstagramDataset:
 class ResNet:
 
     def __init__(self, dataloaders, dataset_sizes, pretrained: bool = True):
-        self.model = models.resnet50(pretrained=pretrained)
+        self.model = models.resnet18(pretrained=pretrained)
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.dataloaders = dataloaders
         self.dataset_sizes = dataset_sizes
@@ -151,6 +157,11 @@ class ResNet:
                 # Iterate over data.
                 for inputs, labels in self.dataloaders[phase]:
                     inputs = inputs.to(self.device)
+                    # convert to float32 to match input. Requirement for MSELoss later.
+                    labels = labels.float()
+                    # The inputs have 2D shape 128x1, labels now is just 1D 128, make it
+                    # 2D 128x1 also.
+                    labels = labels.unsqueeze(1)
                     labels = labels.to(self.device)
 
                     # zero the parameter gradients
@@ -160,7 +171,7 @@ class ResNet:
                     # track history if only in train
                     with torch.set_grad_enabled(phase == 'train'):
                         outputs = model(inputs)
-                        _, preds = torch.max(outputs, 1)
+#                        _, preds = torch.max(outputs, 1)
                         loss = criterion(outputs, labels)
 
                         # backward + optimize only if in training phase
@@ -170,7 +181,7 @@ class ResNet:
 
                     # statistics
                     running_loss += loss.item() * inputs.size(0)
-                    running_corrects += torch.sum(preds == labels.data)
+                    running_corrects += torch.sum(outputs == labels.data)
                 if phase == 'train':
                     scheduler.step()
 
