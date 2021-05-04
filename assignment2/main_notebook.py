@@ -50,6 +50,10 @@ for param in model.parameters():
 num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, 1) # from 2048 to 10 (i.e. our target)
 
+# Don't freeze the fully connected layer
+for param in model.fc.parameters():
+    param.requires_grad = True
+
 model = model.to(resn.device)
 
 # set objective criterion
