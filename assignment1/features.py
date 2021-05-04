@@ -47,9 +47,9 @@ def add_extra_features(df):
     # Look up the involved experts in our blacklist-of-fraudulent-experts
     df['blacklisted_expert_id'] = [((is_fraudulent_expert_id(i)) or (is_fraudulent_expert_id(j)))for i, j in zip(df["driver_expert_id"],df["policy_holder_expert_id"])]
 
-# Seems to have a negative effect on our score, removing.
-#    # Calculate age of policy_holder at time of accident
-#    df['policy_holder_age'] = df["claim_date_occured"].dt.year - df["policy_holder_year_birth"]
+# Seems to have a negative effect on our score, removing. --> Added again for XGB (Boje Deforce - 27/04/2021)
+    # Calculate age of policy_holder at time of accident
+    df['policy_holder_age'] = df["claim_date_occured"].dt.year - df["policy_holder_year_birth"]
 
     # Split the policy_coverage_type bitmap in individual features.
     # e.g. #111110000 becomes pct1 pct2 pct3 pct4 pct5 pct6 pct7 pct8 pct9
@@ -82,13 +82,26 @@ def update_dataset_features(df):
 
     # replace "," with "." and convert to numeric
     df["claim_amount"] = pd.to_numeric(df["claim_amount"].str.replace(",", "."))
+    
+    # add buckets for vehicle power
+    df["vpower_buckets"] = pd.qcut(df["claim_vehicle_power"], 5)
+    
+    # add provinces based on postal code
+    postal_bins = [999, 1299, 1499, 1999, 2999, 3499, 3999, 4999, 5999, 6599, 6999, 7999, 8999, 9999]
+    postal_label = ["brussel", "waals_brabant", "vlaams_brabant", 'Antwerpen', 'vlaams_brabant', 'limburg', 
+                    'luik', 'namen', 'henegouwen', 'luxemburg', 'henegouwen', 'w-vlaanderen', 'o-vlaanderen']
+    df["province"] = pd.cut(df["claim_postal_code"], postal_bins, labels=postal_label, ordered=False)
 
-    # create a one hot encoder to create the dummies and fit it to the data
+    # add feature that describes if policy holders postal code is same as claim postal code
+    df["diff_postal_code"] = (df["policy_holder_postal_code"] == df["claim_postal_code"]).astype(float)
+
+    # create a one hot encoder to create the dummies and fit it to the data for claim_cause, vpower_buckets, province
     # Note: use this method, so that we can use exactly the same one hot encoding
     # also on the submission data
-    claim_cause_ohe = OneHotEncoder(handle_unknown='ignore', sparse=False)
-    claim_cause_ohe.fit(df[['claim_cause']])
-    df = encode_claim_cause(claim_cause_ohe, df)
+    cols = ['claim_cause', 'vpower_buckets', 'province']
+    ohe = OneHotEncoder(handle_unknown='ignore', sparse=False)
+    ohe.fit(df[cols])
+    df = encode(ohe, df, cols)
 
     # format date
     YYYYMMDD_date_columns = ["claim_date_registered",
@@ -111,20 +124,20 @@ def update_dataset_features(df):
 
     # dropped for now but can be added for futher improvement
     drop_temp = [
-        "claim_postal_code",  # rural area
-        "claim_vehicle_brand",  # premium or not
+        "claim_postal_code",  # added as feature
+        "claim_vehicle_brand",  # premium or not --> could add average brand-price from statista.com
         "claim_time_occured",
-        # could derive morning, noon, afternoon, evening, night or day/night
+        # could derive morning, noon, afternoon, evening, night or day/night --> too many missing variables
         "claim_vehicle_cyl",
         "claim_vehicle_load",
         "claim_vehicle_fuel_type",
-        "claim_vehicle_power",  # buckets?
-        "policy_holder_postal_code",  # rural area
-        "policy_holder_year_birth",  # age
+        "policy_holder_postal_code",  # rural area --> diff postal code added as feature
+        "policy_holder_year_birth",  # age --> added
         "third_party_1_postal_code",
         "third_party_1_injured",
         "third_party_1_vehicle_type",
         "third_party_1_form",
+        "claim_vehicle_power", # added as feature
         "third_party_1_year_birth",
         "third_party_1_country",
         "repair_postal_code",
@@ -169,10 +182,10 @@ def update_dataset_features(df):
     missing_over_90prct = df.isna().sum().index[np.where(df.isna().sum() > 50000)]
     df.drop(columns=missing_over_90prct, inplace=True)
 
-    return df, claim_cause_ohe
+    return df, ohe
 
 
-def encode_claim_cause(claim_cause_ohe, df):
+def encode(ohe, df, cols):
     """
     Use a fitted OneHotEncoder for the claim_cause column and replace it with the
     encode columns
@@ -181,12 +194,13 @@ def encode_claim_cause(claim_cause_ohe, df):
     :param df:
     :return: df
     """
-    trf = claim_cause_ohe.transform(df[['claim_cause']])
-    nr_of_cols = len(trf[0])
-    col_names = ['cc%d' % i for i in range(1, nr_of_cols + 1)]
+    trf = ohe.transform(df[cols])
+    col_names = [] 
+    for i, col in zip(np.arange(len(ohe.categories_)),cols):
+        col_names += [f'{col}_{j}' for j in ohe.categories_[i]]
     df2 = pd.DataFrame(trf, columns=col_names, index=df.index)
     df = pd.concat([df, df2], axis='columns')
-    del df['claim_cause']
+    df.drop(columns = cols, inplace=True)
     return df
 
 

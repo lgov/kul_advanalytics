@@ -1,0 +1,11 @@
+{'xgbclassifier__subsample': 0.8,
+ 'xgbclassifier__scale_pos_weight': 43.767857142857146,
+ 'xgbclassifier__reg_lambda': 3,
+ 'xgbclassifier__reg_alpha': 0.1,
+ 'xgbclassifier__n_estimators': 200,
+ 'xgbclassifier__min_child_weight': 20,
+ 'xgbclassifier__max_depth': 6,
+ 'xgbclassifier__learning_rate': 0.05,
+ 'xgbclassifier__gamma': 18,
+ 'xgbclassifier__colsample_bytree': 1.0,
+ 'xgbclassifier__base_score': 0.45999999999999996}
