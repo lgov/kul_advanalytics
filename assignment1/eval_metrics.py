@@ -30,8 +30,9 @@ def savings(X_train, y_train, X_test, y_test, cost_mat_train, cost_mat_test, mod
     # max_cost is if we would label everything as negative (i.e. if we don't use our model)
     # costs calculates how much costs our model makes (i.e. we still make costs but less since we catch some frauds)
     # this ratio then shows the savings of our model vs. not using our model at all
-    print('train savings: ', np.round((max_cost_train - cost_train) / max_cost_train, 3))
-    print('test savings: ', np.round((max_cost_test - cost_test) / max_cost_test, 3))
+    train_savings = np.round((max_cost_train - cost_train) / max_cost_train, 3)
+    test_savings = np.round((max_cost_test - cost_test) / max_cost_test, 3)
+    return (train_savings, test_savings)
 
 def evaluate(name, y_train, y_test, y_pred_train, y_pred_test, cost_mat_train, cost_mat_test):
     data = zip(y_train, y_test, y_pred_train, y_pred_test, cost_mat_train, cost_mat_test)
