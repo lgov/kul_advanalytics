@@ -10,6 +10,12 @@ import splitfolders
 import time
 import copy
 
+
+# The number of threads to use to load the images from disk
+# Set the number of workers to 0 when you are debugging, 8 or higher for prod.
+NUM_WORKERS=8
+
+
 def data_labeler(target_dir:str, source_dir:str, bins:int, target_name:str,
                  metadata_path: str = "recipes.csv", sep:str = ";"):
     '''
@@ -29,10 +35,10 @@ def data_labeler(target_dir:str, source_dir:str, bins:int, target_name:str,
     # plt.show()
     labels = [str(i) for i in set(meta_data[f'{target_name}_binned'])]
 
-    # # Assume that the previous time we ran this script the labelled image folder
-    # # was created succesfully.
-    # if os.path.isdir(target_dir):
-    #     return
+    # Assume that the previous time we ran this script the labelled image folder
+    # was created succesfully.
+    if os.path.isdir(target_dir):
+        return
 
     # overwrites dir if already existing
     if os.path.isdir(target_dir):
@@ -41,6 +47,7 @@ def data_labeler(target_dir:str, source_dir:str, bins:int, target_name:str,
     for i in labels:
         os.mkdir(os.path.join(target_dir,str(i)))
     print(f"target directories created at: {target_dir}")
+
     # Copy each image file to the (per label) output folder
     for source_file in os.listdir(source_dir):
         source_path = os.path.join(source_dir, source_file)
@@ -50,6 +57,7 @@ def data_labeler(target_dir:str, source_dir:str, bins:int, target_name:str,
         pic_id = source_file.split('.')[0]
         label = str(list(meta_data[meta_data['photo_id'] == pic_id][f"{target_name}_binned"])[0])
         shutil.copy(source_path, os.path.join(target_dir, label))
+
     # split image-folder into train test split to adhere PyTorch structure
     splitfolders.ratio(target_dir, output=f"{target_dir}_splitted", seed=43, ratio=(.8, .1, .1))
     print(f"Splitting and labeling done. Results can be found at: {target_dir}_splitted")
@@ -79,7 +87,7 @@ class InstagramDataset:
 
     data_transforms["test"] = data_transforms["val"]  # equal transformation to test as to val-data
 
-    def __init__(self, img_dir: str, transform: dict = data_transforms, BATCHSIZE: int = 128):
+    def __init__(self, img_dir: str, transform: dict = data_transforms, BATCHSIZE: int = 64):
         '''
         initialize instagram dataset
         :param img_dir: directory/root of images, following PyTorch convention of folder structure.
@@ -98,11 +106,12 @@ class InstagramDataset:
                                                        self.transform[x]) for x in ['train', 'val', 'test']
                                }
         self.dataloaders = {x: torch.utils.data.DataLoader(self.image_datasets[x], batch_size=BATCHSIZE,
-                                                           shuffle=True, num_workers=0)
+                                                           shuffle=True, num_workers=NUM_WORKERS)
                             for x in ['train', 'val', 'test']
                             }
         self.dataset_sizes = {x: len(self.image_datasets[x]) for x in ['train', 'val', 'test']}
         self.class_names = self.image_datasets['train'].classes
+        self.label_normalization = (200, 200)
 
     def imshow(self, image_index):
         """Imshow for Tensor."""
@@ -114,15 +123,15 @@ class InstagramDataset:
         plt.imshow(inp)
 
 
-
-
 class ResNet:
 
-    def __init__(self, dataloaders, dataset_sizes, pretrained: bool = True):
+    def __init__(self, dataloaders, dataset_sizes, label_normalization, pretrained: bool = True):
         self.model = models.resnet18(pretrained=pretrained)
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        # Use all available GPUs in the system.
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.dataloaders = dataloaders
         self.dataset_sizes = dataset_sizes
+        self.label_normalization = label_normalization
 
     def train_model(self, criterion, optimizer, scheduler, num_epochs=25):
         '''
@@ -159,6 +168,10 @@ class ResNet:
                     inputs = inputs.to(self.device)
                     # convert to float32 to match input. Requirement for MSELoss later.
                     labels = labels.float()
+                    mean, stddev = self.label_normalization
+                    labels -= mean
+                    labels /= stddev
+
                     # The inputs have 2D shape 128x1, labels now is just 1D 128, make it
                     # 2D 128x1 also.
                     labels = labels.unsqueeze(1)
@@ -191,12 +204,12 @@ class ResNet:
                 print('{} Loss: {:.4f} Acc: {:.4f}'.format(
                     phase, epoch_loss, epoch_acc))
 
+                torch.save(model.state_dict(), f'model_weights-{epoch}.pth')
+
                 # deep copy the model
                 if phase == 'val' and epoch_acc > best_acc:
                     best_acc = epoch_acc
                     best_model_wts = copy.deepcopy(model.state_dict())
-
-            print()
 
         time_elapsed = time.time() - since
         print('Training complete in {:.0f}m {:.0f}s'.format(
