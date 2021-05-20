@@ -6,7 +6,6 @@
 # * see [here](https://pypi.org/project/split-folders/) for more information on the splitfolders package used in 'helper'
 # * general example to follow: see [here](https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html), [here](https://towardsdatascience.com/a-practical-example-in-transfer-learning-with-pytorch-846bb835f2db), or [here](https://towardsdatascience.com/transfer-learning-with-convolutional-neural-networks-in-pytorch-dd09190245ce)
 
-import os
 from multiprocessing.spawn import freeze_support
 
 freeze_support()
@@ -38,29 +37,31 @@ dataloaders = insta_data.dataloaders
 
 
 # # The model
-resn = ResNet(dataloaders, insta_data.dataset_sizes, pretrained=True) #initialize the ResNet defined in helper
+resn = ResNet(dataloaders, insta_data.dataset_sizes, insta_data.label_normalization, pretrained=True) #initialize the ResNet defined in helper
 model = resn.model
 model.eval() #the original resnet 50 structure
 
-# Freeze model weights
-for param in model.parameters():
-    param.requires_grad = False
+# # Freeze model weights
+# for param in model.parameters():
+#     param.requires_grad = False
 
 # extract number of nodes in last fc layer and add own fc layer
 num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, 1) # from 2048 to 10 (i.e. our target)
 
-# Don't freeze the fully connected layer
-for param in model.fc.parameters():
-    param.requires_grad = True
+# # Don't freeze the fully connected layer
+# for param in model.fc.parameters():
+#     param.requires_grad = True
 
-model = model.to(resn.device)
+# Split data over all available GPUs
+model = nn.DataParallel(model).to(resn.device)
 
 # set objective criterion
 criterion = nn.MSELoss()
 
 # Observe that only params in last fc layer are optimized
-optimizer_ft = optim.SGD(model.fc.parameters(), lr=0.001, momentum=0.9)
+# lr=0.001 is very low no changes in training, try a higher value.
+optimizer_ft = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 # Decay LR by a factor of 0.1 every 7 epochs
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=6, gamma=0.1)
