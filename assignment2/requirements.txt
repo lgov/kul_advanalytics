@@ -2,3 +2,5 @@ jupyter
 split-folders
 torch
 torchvision
+Flask
+requests
