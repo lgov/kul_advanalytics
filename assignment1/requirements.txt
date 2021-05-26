@@ -10,3 +10,4 @@ autogluon.mxnet
 autogluon.tabular
 catboost
 lightgbm
+bokeh==2.0.1
