@@ -4,3 +4,5 @@ torch
 torchvision
 Flask
 requests
+tensorflow
+keras
