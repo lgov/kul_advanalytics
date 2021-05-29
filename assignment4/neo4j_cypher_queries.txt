@@ -1,0 +1,32 @@
+// Copy the hashtag id property to hashtag, so we can import it in Gephi
+MATCH (h:HASHTAG)
+WHERE h.hashtag IS NULL
+SET h.hashtag = h.id
+
+// Export all nodes reachable from the astrazeneca hashtag
+CALL apoc.export.graphml.query("
+MATCH (h:HASHTAG)-[r1]-(vid1)-[rec]-(vid2)-[r2]-(h2:HASHTAG)
+WHERE h.id = 'astrazeneca'
+RETURN h.id as hashtag1,h2.id as hashtag2, r1,r2,vid1, vid2
+", "astrazeneca.graphml",
+{})
+
+// Export all hashtags and their reachability
+CALL apoc.export.graphml.query("
+MATCH (h:HASHTAG)-[r1]-(vid1)-[rec]-(vid2)-[r2]-(h2:HASHTAG)
+WHERE vid1.likes > 100000 AND vid2.likes > 100000
+RETURN h.id as hashtag1,h2.id as hashtag2, r1,r2,vid1, vid2
+", "all_hashtags.graphml",
+{})
+
+// Export all nodes reachable from the astrazeneca hashtag
+CALL apoc.export.graphml.query("
+MATCH (h:HASHTAG)-[r1]-(vid1)-[rec]-(vid2)-[r2]-(h2:HASHTAG)
+WHERE vid1.likes > 100000 AND vid2.likes > 100000 AND h.id = 'astrazeneca'
+RETURN h.id as hashtag1,h2.id as hashtag2, r1,r2,vid1, vid2
+", "astrazeneca.graphml",
+{})
+
+// Find all videos that link to a justin bieber video
+MATCH (vid)-[r:MENTIONS]-(h:HASHTAG) where h.id='justinbieber' return vid, h
+
