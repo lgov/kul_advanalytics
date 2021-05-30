@@ -2,5 +2,7 @@ jupyter
 split-folders
 torch
 torchvision
+Flask
+requests
 tensorflow
 keras

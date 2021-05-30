@@ -1,6 +1,0 @@
-jupyter
-pandas
-scikit-learn
-matplotlib
-imblearn
-xgboost==1.3.3
