@@ -1,0 +1,6 @@
+jupyter
+spark
+pandas
+scikit-learn
+matplotlib
+nltk
