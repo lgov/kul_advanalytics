@@ -1,3 +1,4 @@
-#Assignment 3
-* The final model pipeline which is used for prediction on the data stream: 
-* Predicting on the data stream: deployed_model.ipnyb
+## Assignment 3
+* The final model pipeline which is used for prediction on the data stream: `model_pipeline.ipynb`
+* Predicting on the data stream: `deployed_model.ipynb`
+* Evaluation outputs can be found in the end of this notebook: `logistic_regression_countVect_TFIDF_eval`
