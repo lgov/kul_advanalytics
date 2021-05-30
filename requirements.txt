@@ -1,3 +1,4 @@
+# assignment 1
 jupyter
 pandas
 scikit-learn
@@ -12,3 +13,22 @@ catboost
 lightgbm
 bokeh==2.0.1
 seaborn
+
+# assignment 2
+jupyter
+split-folders
+torch
+torchvision
+Flask
+requests
+tensorflow
+keras
+
+
+# assignment 3
+jupyter
+spark
+pandas
+scikit-learn
+matplotlib
+nltk
