@@ -67,7 +67,7 @@ def update_dataset_features(df):
              claim_cause_ohe: one hot encoder object for the claim_cause column
     """
     # convert binary text variables into binary: {"Y":1, "N":0}
-    for i in ["fraud", "claim_liable", "claim_police", "driver_injured"]:
+    for i in ["fraud", "claim_liable", "claim_police"]: # , "driver_injured"]:
         text_to_binary(i, "Y", "N", df)
     # {"P":1, "N":0}
     text_to_binary("claim_alcohol", "P", "N", df)
