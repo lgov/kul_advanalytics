@@ -144,3 +144,9 @@ recipes.zip
 
 # images
 *.png
+
+# keras
+*.h5
+result*.json
+*.tf
+test*.csv
